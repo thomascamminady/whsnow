@@ -16,6 +16,8 @@ from wahoosnowmaker.parser.parse_folder import parse_folder
 @st.cache_data
 def show_chart(df):
     logger.info("Creating chart.")
+    logger.info(df.columns)
+
     base = (
         alt.Chart(df)
         .mark_line(clip=True, point=False)
@@ -92,5 +94,5 @@ def chart(dataset_folder: str):
             # center on Liberty Bell, add marker
 
             # call to render Folium map in Streamlit
-            st_folium(create_map(df.to_pandas()), width=1000, returned_objects=[])
+            st_folium(create_map(df.to_pandas()), width=1200, returned_objects=[])
             show_chart(df.to_pandas())

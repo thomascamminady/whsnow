@@ -9,7 +9,11 @@ from wahoosnowmaker.app.create_dataset_folder import create_dataset_folder
 from wahoosnowmaker.app.markdown import centered_markdown_title
 
 if __name__ == "__main__":
-    st.set_page_config(page_title="Upload new data.", initial_sidebar_state="collapsed")
+    st.set_page_config(
+        page_title="Upload new data.",
+        initial_sidebar_state="collapsed",
+        layout="wide",
+    )
 
     # Upload new data
     st.markdown(centered_markdown_title("Create new dataset"), unsafe_allow_html=True)
