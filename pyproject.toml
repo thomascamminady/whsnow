@@ -5,7 +5,7 @@ description = ""
 authors = ["Thomas Camminady <0milieux_member@icloud.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.9,<3.11"
 altair = "^4.2.2"
 streamlit = "^1.21.0"
 garmin-fit-sdk = "^21.107.0"
