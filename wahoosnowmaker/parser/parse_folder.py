@@ -3,7 +3,6 @@ import glob
 import polars as pl
 
 from wahoosnowmaker import logger
-from wahoosnowmaker.parser.fitparser import FitParser
 from wahoosnowmaker.parser.fitparser import GarminFitSDKParser as Parser
 from wahoosnowmaker.parser.pipes import (
     assign_file,
@@ -17,12 +16,10 @@ from wahoosnowmaker.parser.pipes import (
 
 def parse_folder(
     session_folder: str,
-    fitparser: FitParser | None = None,
     fit_ending: str = "/*.fit",
 ) -> pl.DataFrame:
     df_list = []
-    if fitparser is None:
-        fitparser = Parser()
+    fitparser = Parser()
     for fitfile in glob.glob(session_folder + fit_ending):
         try:
             df_list.append(
