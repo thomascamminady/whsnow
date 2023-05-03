@@ -1,12 +1,20 @@
 """Entry point to our Streamlit app."""
-import webbrowser
 import glob
-from pathlib import Path
 import os
-import streamlit as st
 import shutil
+import webbrowser
+from pathlib import Path
+
+import streamlit as st
+
 from wahoosnowmaker.app.create_dataset_folder import create_dataset_folder
 from wahoosnowmaker.app.markdown import centered_markdown_title
+from streamlit_javascript import st_javascript
+
+
+def get_domain():
+    return st_javascript("await fetch('').then(r => window.parent.location.href)")
+
 
 if __name__ == "__main__":
     st.set_page_config(
@@ -14,6 +22,7 @@ if __name__ == "__main__":
         initial_sidebar_state="collapsed",
         layout="wide",
     )
+    domain = get_domain()
 
     # Upload new data
     st.markdown(centered_markdown_title("Create new dataset"), unsafe_allow_html=True)
@@ -35,7 +44,7 @@ if __name__ == "__main__":
                 os.remove(file)
         # redirect to analysis view
         if len(uploaded_files) > 0:
-            url = f"""http://localhost:8501/Analysis?folder={folder}"""
+            url = f"""{domain}Analysis?folder={folder}"""
             webbrowser.open(url)
 
     # Inspect existing data
@@ -45,7 +54,7 @@ if __name__ == "__main__":
     for _i, folder in enumerate(existing_folders):
         # print(folder, len(glob.glob(folder + "/*.fit")))
         if (n := len(glob.glob(folder + "/*.fit"))) > 0:
-            url = f"""http://localhost:8501/Analysis?folder={folder}"""
+            url = f"""{domain}Analysis?folder={folder}"""
 
             st.write(
                 f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""

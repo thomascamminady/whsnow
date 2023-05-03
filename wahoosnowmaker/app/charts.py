@@ -1,12 +1,9 @@
 import glob
-import os
-
-from pathlib import Path
-import vegafusion as vf
 
 import altair as alt
 import folium
 import streamlit as st
+import vegafusion as vf
 from streamlit_folium import st_folium
 
 from wahoosnowmaker import logger
