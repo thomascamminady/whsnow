@@ -8,11 +8,16 @@ from pathlib import Path
 import streamlit as st
 
 from wahoosnowmaker import logger
-from wahoosnowmaker.app.create_dataset_folder import create_dataset_folder
-from wahoosnowmaker.app.markdown import centered_markdown_title
+from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
 
 DOMAIN = """https://wahoofitness.streamlit.app"""
-# DOMAIN = """http://localhost:8501"""
+DOMAIN = """http://localhost:8501"""
+
+
+def centered_markdown_title(text: str) -> str:
+    return f"""<h1 style='text-align: center; color: grey;'>{text}</h1>"""
+
+
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Upload new data.",

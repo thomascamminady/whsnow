@@ -26,7 +26,7 @@ class FitParser(ABC):
             return self._fit_to_records_df(fit_file)
         except Exception as e:
             logger.error(f"[FIT Parsing] Error parsing {fit_file}: {e}")
-            raise FitParsingError(fit_file, str(e))
+            raise FitParsingError(fit_file, str(e)) from e
 
     @abstractmethod
     def _fit_to_records_df(self, fit_file: str) -> pl.LazyFrame:
@@ -60,5 +60,4 @@ class GarminFitSDKParser(FitParser):
             for record in records
         ]
 
-        # pl.DataFrame(records).to_pandas().to_csv(fit_file + ".csv")
         return pl.DataFrame(records).lazy()

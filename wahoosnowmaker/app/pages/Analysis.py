@@ -2,7 +2,7 @@ import glob as glob
 
 import streamlit as st
 
-from wahoosnowmaker.app.chartsplotly import chart
+from wahoosnowmaker.app.viz.chartsplotly import chart
 
 if __name__ == "__main__":
     st.set_page_config(
