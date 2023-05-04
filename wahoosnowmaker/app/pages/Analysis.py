@@ -48,12 +48,7 @@ def app(df: pd.DataFrame, folder: str):
                 st.text(file)
             with centerright:
                 with open(file, "rb") as f:
-                    st.download_button(
-                        label="Download",
-                        data=f,
-                        file_name=file,
-                        # mime="image/png"
-                    )
+                    st.download_button(label="Download", data=f, file_name=file)
 
     show_map(df)
     show_chart(df)
