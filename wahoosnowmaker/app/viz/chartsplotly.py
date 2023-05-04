@@ -1,12 +1,9 @@
-import glob
-
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
 from wahoosnowmaker import logger
-from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
 @st.cache_data
@@ -118,18 +115,3 @@ def show_map(df: pd.DataFrame) -> None:
     fig.update_geos(fitbounds="locations")
 
     st.plotly_chart(fig, use_container_width=True)
-
-
-@st.cache_data  # should receive the files, not the folder
-def cached_parse_folder(dataset_folder):
-    return parse_folder(dataset_folder)
-
-
-def chart(dataset_folder: str):
-    uploaded_files = glob.glob(dataset_folder + "/*.fit")
-
-    if uploaded_files is not None:
-        if len(uploaded_files) > 0:
-            df = cached_parse_folder(dataset_folder).to_pandas()
-            show_map(df)
-            show_chart(df)

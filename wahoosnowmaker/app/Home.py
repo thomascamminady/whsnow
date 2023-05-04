@@ -8,6 +8,8 @@ import streamlit as st
 
 from wahoosnowmaker import logger
 from wahoosnowmaker.app.domain import domain as home
+from wahoosnowmaker.app.markdown import centered_markdown_title
+from wahoosnowmaker.app.saveload import load_name
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
 
 
@@ -41,14 +43,16 @@ def check_password():
 
 
 def app():
+    st.write(centered_markdown_title("Wahoo .FIT Inspector"), unsafe_allow_html=True)
+
     # Very crude way to redirect to base page without parameters
     st.experimental_set_query_params()
 
-    def centered_markdown_title(text: str) -> str:
-        return f"""<h1 style='text-align: center; color: grey;'>{text}</h1>"""
-
     # Upload new data
-    st.markdown(centered_markdown_title("Create new dataset"), unsafe_allow_html=True)
+    st.markdown(
+        centered_markdown_title("Create new dataset", heading_level=2),
+        unsafe_allow_html=True,
+    )
     uploaded_files = st.file_uploader(" ", type=".fit", accept_multiple_files=True)
     if uploaded_files is not None:
         # create new location to store data
@@ -70,7 +74,10 @@ def app():
             # webbrowser.open(url)
 
     # Inspect existing data
-    st.markdown(centered_markdown_title("Inspect old dataset"), unsafe_allow_html=True)
+    st.markdown(
+        centered_markdown_title("Inspect old dataset", heading_level=2),
+        unsafe_allow_html=True,
+    )
     existing_folders = glob.glob("data/*")
     existing_folders.sort(reverse=True)
     for _i, folder in enumerate(existing_folders):
@@ -82,7 +89,8 @@ def app():
 
             left, right = st.columns((4, 1))
             with left:
-                st.write(f"""#### [{folder.split("/")[-1].upper()}]({url})""")
+                name = load_name(folder)
+                st.write(f"""#### [{name}]({url})""")
             with right:
                 button_delete = st.button("Delete", key=f"Delete {_i}")
                 if button_delete:
