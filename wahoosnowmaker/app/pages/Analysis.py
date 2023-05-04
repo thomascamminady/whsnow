@@ -26,7 +26,7 @@ def app(df: pd.DataFrame, folder: str):
         unsafe_allow_html=True,
     )
     st.write(
-        centered_markdown_title(load_name(folder), homepage),
+        centered_markdown_title(load_name(folder), heading_level=2),
         unsafe_allow_html=True,
     )
 
