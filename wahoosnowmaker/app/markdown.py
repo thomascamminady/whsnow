@@ -1,5 +1,8 @@
+from typing import Union
+
+
 def centered_markdown_title(
-    text: str, heading_level: int = 1, href: str | None = None
+    text: str, heading_level: int = 1, href: Union[str, None] = None
 ) -> str:
     if href is None:
         return f"""<h{heading_level} style='text-align: center; color: grey;'>{text}</h{heading_level}>"""
