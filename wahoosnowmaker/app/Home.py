@@ -84,7 +84,7 @@ def app():
         # print(folder, len(glob.glob(folder + "/*.fit")))
 
         files = glob.glob(folder + "/*.fit")
-        if (n := len(files)) > 0:
+        if (len(files)) > 0:
             url = f"""{home}/Analysis?folder={folder}"""
 
             left, right = st.columns((4, 1))
@@ -96,19 +96,19 @@ def app():
                 if button_delete:
                     shutil.rmtree(folder)
                     st.experimental_rerun()
-            with st.expander(f"""See {n} .fit file{"" if n==1 else "s"}"""):
-                for file in files:
-                    centerleft, centerright = st.columns((4, 1))
-                    with centerleft:
-                        st.text(file)
-                    with centerright:
-                        with open(file, "rb") as f:
-                            st.download_button(
-                                label="Download",
-                                data=f,
-                                file_name=file,
-                                # mime="image/png"
-                            )
+            # with st.expander(f"""See {n} .fit file{"" if n==1 else "s"}"""):
+            #     for file in files:
+            #         centerleft, centerright = st.columns((4, 1))
+            #         with centerleft:
+            #             st.text(file)
+            #         with centerright:
+            #             with open(file, "rb") as f:
+            #                 st.download_button(
+            #                     label="Download",
+            #                     data=f,
+            #                     file_name=file,
+            #                     # mime="image/png"
+            #                 )
 
         else:
             try:

@@ -30,7 +30,7 @@ def app(df: pd.DataFrame, folder: str):
         unsafe_allow_html=True,
     )
 
-    tab1, tab2, tab3 = st.tabs(["Notes", "Data", "Rename"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Notes", "Data", "Rename", "Download"])
     with tab1:
         dataset_notes = st.text_area(" ", value=load_notes(folder), height=300)
         save_notes(folder, dataset_notes)
@@ -40,6 +40,20 @@ def app(df: pd.DataFrame, folder: str):
     with tab3:
         dataset_name = st.text_input(" ", load_name(folder))
         save_name(folder, dataset_name)
+    with tab4:
+        files = glob.glob(folder + "/*.fit")
+        for file in files:
+            centerleft, centerright = st.columns((4, 1))
+            with centerleft:
+                st.text(file)
+            with centerright:
+                with open(file, "rb") as f:
+                    st.download_button(
+                        label="Download",
+                        data=f,
+                        file_name=file,
+                        # mime="image/png"
+                    )
 
     show_map(df)
     show_chart(df)
