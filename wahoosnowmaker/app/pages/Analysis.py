@@ -1,5 +1,6 @@
 import glob as glob
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -49,8 +50,11 @@ def app(df: pd.DataFrame, folder: str):
             with centerright:
                 with open(file, "rb") as f:
                     st.download_button(label="Download", data=f, file_name=file)
-
-    show_map(df)
+    default = int(np.argwhere(df.columns == "file")[0][0])
+    color_by = st.selectbox("Color", df.columns, default)
+    if color_by is None:
+        color_by = "file"
+    show_map(df, color_attribute=color_by)
     show_chart(df)
 
 

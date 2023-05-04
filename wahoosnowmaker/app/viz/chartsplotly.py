@@ -65,18 +65,34 @@ def show_chart(df: pd.DataFrame) -> None:
 
 
 @st.cache_data
-def show_map(df: pd.DataFrame) -> None:
-    fig = go.Figure()
-    for grp, dfgrp in df.groupby("file"):
-        fig.add_trace(
-            go.Scattermapbox(
-                mode="markers+lines",
-                lon=dfgrp["longitude"],
-                lat=dfgrp["latitude"],
-                marker={"size": 8},
-                name=grp,
-            )
-        )
+def show_map(df: pd.DataFrame, color_attribute: str = "file") -> None:
+    # fig = go.Figure()
+    # for grp, dfgrp in df.groupby("file"):
+    #     fig.add_trace(
+    #         px.scatter_geo(
+    #             data_frame=dfgrp,
+    #             # mode="markers+lines",
+    #             lon="longitude",
+    #             lat="latitude",
+    #             color="altitude",
+    #             g
+    #             # marker={"size": 8},
+    #             # name=grp,
+    #         )
+    #     )
+    fig = px.scatter_mapbox(
+        data_frame=df,
+        # mode="markers+lines",
+        lon="longitude",
+        lat="latitude",
+        color=color_attribute,
+        color_continuous_scale="inferno"
+        # marker={"size": 8},
+        # name=grp,
+    )
+    fig.add_traces(
+        px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data,
+    )
 
     min_lat, max_lat = df["latitude"].min(), df["latitude"].max()
     center_lat = (min_lat + max_lat) / 2
@@ -110,6 +126,16 @@ def show_map(df: pd.DataFrame) -> None:
             "zoom": 10,
         },
         mapbox_accesstoken=st.secrets["mapbox_api_key"],
+    )
+    fig.update_layout(
+        coloraxis_colorbar={
+            "len": 0.5,
+            "xanchor": "right",
+            "x": 1,
+            "yanchor": "bottom",
+            "y": 0.1,
+            "thickness": 10,
+        }
     )
 
     fig.update_geos(fitbounds="locations")
