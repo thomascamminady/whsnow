@@ -11,7 +11,7 @@ if __name__ == "__main__":
         initial_sidebar_state="collapsed",
         layout="wide",
     )
-    st.write(f"[Home]({homepage})")
+    st.write(f"### [Home]({homepage})")
     query_parameters = st.experimental_get_query_params()
     if query_parameters is not None:
         if "folder" in query_parameters.keys():

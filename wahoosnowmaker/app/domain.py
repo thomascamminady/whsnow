@@ -1,2 +1,2 @@
 domain = """https://wahoofitness.streamlit.app"""
-# domain = """http://localhost:8501"""
+domain = """http://localhost:8501"""

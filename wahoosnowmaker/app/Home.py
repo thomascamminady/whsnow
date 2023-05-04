@@ -49,7 +49,6 @@ def app():
 
     # Upload new data
     st.markdown(centered_markdown_title("Create new dataset"), unsafe_allow_html=True)
-
     uploaded_files = st.file_uploader(" ", type=".fit", accept_multiple_files=True)
     if uploaded_files is not None:
         # create new location to store data
@@ -79,34 +78,29 @@ def app():
 
         files = glob.glob(folder + "/*.fit")
         if (n := len(files)) > 0:
-            _, center, right = st.columns(3)
-            with center:
-                url = f"""{home}/Analysis?folder={folder}"""
+            url = f"""{home}/Analysis?folder={folder}"""
 
-                st.write(
-                    f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
-                )
-                with st.expander(".FIT files"):
-                    for file in files:
-                        centerleft, centerright = st.columns(2)
-                        with centerleft:
-                            st.text(file)
-                        with centerright:
-                            with open(file, "rb") as f:
-                                st.download_button(
-                                    label="Download",
-                                    data=f,
-                                    file_name=file,
-                                    # mime="image/png"
-                                )
-
+            left, right = st.columns((4, 1))
+            with left:
+                st.write(f"""#### [{folder.split("/")[-1].upper()}]({url})""")
             with right:
                 button_delete = st.button("Delete", key=f"Delete {_i}")
                 if button_delete:
                     shutil.rmtree(folder)
                     st.experimental_rerun()
-
-            st.divider()
+            with st.expander(f"""See {n} .fit file{"" if n==1 else "s"}"""):
+                for file in files:
+                    centerleft, centerright = st.columns((4, 1))
+                    with centerleft:
+                        st.text(file)
+                    with centerright:
+                        with open(file, "rb") as f:
+                            st.download_button(
+                                label="Download",
+                                data=f,
+                                file_name=file,
+                                # mime="image/png"
+                            )
 
         else:
             try:
@@ -118,7 +112,7 @@ def app():
 st.set_page_config(
     page_title="Upload new data.",
     initial_sidebar_state="collapsed",
-    layout="wide",
+    layout="centered",
 )
 if check_password():
     app()
