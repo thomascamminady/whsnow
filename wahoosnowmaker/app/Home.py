@@ -86,12 +86,12 @@ def app():
                 st.write(
                     f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
                 )
-                col1, col2, *_ = st.columns(10)
-                with col1:
+                left, right = st.columns(2)
+                with left:
                     button_view = st.button("View", key=f"View {_i}")
                     if button_view:
                         webbrowser.open(url)
-                with col2:
+                with right:
                     button_delete = st.button("Delete", key=f"Delete {_i}")
                     if button_delete:
                         shutil.rmtree(folder)
