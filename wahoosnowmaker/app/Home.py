@@ -87,10 +87,10 @@ def app():
                     f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
                 )
                 left, right = st.columns(2)
-                with left:
-                    button_view = st.button("View", key=f"View {_i}")
-                    if button_view:
-                        webbrowser.open(url)
+                # with left:
+                #     button_view = st.button("View", key=f"View {_i}")
+                #     if button_view:
+                #         webbrowser.open(url)
                 with right:
                     button_delete = st.button("Delete", key=f"Delete {_i}")
                     if button_delete:
