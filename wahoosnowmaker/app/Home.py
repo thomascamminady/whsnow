@@ -11,7 +11,7 @@ from wahoosnowmaker import logger
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
 
 DOMAIN = """https://wahoofitness.streamlit.app"""
-DOMAIN = """http://localhost:8501"""
+# DOMAIN = """http://localhost:8501"""
 
 
 # See: https://docs.streamlit.io/knowledge-base/deploy/authentication-without-sso
