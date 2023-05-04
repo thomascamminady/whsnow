@@ -20,6 +20,11 @@ if __name__ == "__main__":
         layout="wide",
     )
 
+    # Very crude way to redirect to base page without parameters
+    query_parameters = st.experimental_get_query_params()
+    if len(query_parameters) > 0:
+        webbrowser.open(DOMAIN)
+
     # Upload new data
     st.markdown(centered_markdown_title("Create new dataset"), unsafe_allow_html=True)
 
