@@ -11,7 +11,8 @@ from wahoosnowmaker.app.create_dataset_folder import create_dataset_folder
 from wahoosnowmaker.app.markdown import centered_markdown_title
 from streamlit_javascript import st_javascript
 
-
+DOMAIN = """https://thomascamminady-whsnow-wahoosnowmakerapphome-avyfnr.streamlit.app"""
+# DOMAIN = """http://localhost:8501"""
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Upload new data.",
@@ -39,7 +40,7 @@ if __name__ == "__main__":
                 os.remove(file)
         # redirect to analysis view
         if len(uploaded_files) > 0:
-            url = f"""https://thomascamminady-whsnow-wahoosnowmakerapphome-avyfnr.streamlit.app/Analysis?folder={folder}"""
+            url = f"""{DOMAIN}/Analysis?folder={folder}"""
             webbrowser.open(url)
 
     # Inspect existing data
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     for _i, folder in enumerate(existing_folders):
         # print(folder, len(glob.glob(folder + "/*.fit")))
         if (n := len(glob.glob(folder + "/*.fit"))) > 0:
-            url = f"""https://thomascamminady-whsnow-wahoosnowmakerapphome-avyfnr.streamlit.app/Analysis?folder={folder}"""
+            url = f"""{DOMAIN}/Analysis?folder={folder}"""
 
             st.write(
                 f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""

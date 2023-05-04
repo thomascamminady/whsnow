@@ -17,6 +17,7 @@ st-pages = "^0.4.1"
 vegafusion = {extras = ["embed"], version = "^1.2.3"}
 plotly = "^5.14.1"
 streamlit-javascript = "^0.1.5"
+folium = "^0.14.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.0.1"
