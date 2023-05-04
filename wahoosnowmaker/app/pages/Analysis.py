@@ -7,7 +7,7 @@ from wahoosnowmaker.app.chartsplotly import chart
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Analysis.",
-        initial_sidebar_state="collapsed",
+        # initial_sidebar_state="collapsed",
         layout="wide",
     )
     query_parameters = st.experimental_get_query_params()

@@ -16,12 +16,13 @@ DOMAIN = """https://wahoofitness.streamlit.app"""
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Upload new data.",
-        initial_sidebar_state="collapsed",
+        # initial_sidebar_state="collapsed",
         layout="wide",
     )
 
     # Very crude way to redirect to base page without parameters
     query_parameters = st.experimental_get_query_params()
+    st.write(query_parameters)
     if len(query_parameters) > 0:
         webbrowser.open(DOMAIN)
 
