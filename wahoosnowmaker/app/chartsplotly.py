@@ -25,6 +25,24 @@ def show_chart(df: pd.DataFrame) -> None:
         .reset_index()
         .drop(columns=["index"])
     )
+    ideal_order = [
+        "speed",
+        "altitude",
+        "heartrate",
+        "cadence",
+        "temperature",
+        "distance",
+    ]
+    custom_order = []
+    # take everything from the ideal order that exists in the dataframe
+    for item in ideal_order:
+        if item in df.columns:
+            custom_order.append(item)
+    # take everything from the dataframe that is not yet in the custom order
+    for item in df.columns:
+        if item not in custom_order:
+            custom_order.append(item)
+
     fig = px.line(
         df_long,
         x="Elapsed time (seconds)",
@@ -33,13 +51,15 @@ def show_chart(df: pd.DataFrame) -> None:
         facet_row="type",
         height=3600,
         width=800,
-    ).update_traces(mode="lines+markers")
+        category_orders={"type": custom_order},
+    )
+
+    fig.update_traces(mode="lines+markers")
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     fig.for_each_annotation(lambda a: a.update(font={"size": 20}))
     fig.for_each_annotation(lambda a: a.update(textangle=0))
-
-    # Set the y-axis scale to be independent for each facet
     fig.update_yaxes(matches=None)
+
     st.plotly_chart(fig, use_container_width=True)
 
 
