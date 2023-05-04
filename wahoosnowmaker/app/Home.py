@@ -2,7 +2,6 @@
 import glob
 import os
 import shutil
-import webbrowser
 from pathlib import Path
 
 import streamlit as st
@@ -69,7 +68,7 @@ def app():
         # redirect to analysis view
         if len(uploaded_files) > 0:
             url = f"""{home}/Analysis?folder={folder}"""
-            webbrowser.open(url)
+            # webbrowser.open(url)
 
     # Inspect existing data
     st.markdown(centered_markdown_title("Inspect old dataset"), unsafe_allow_html=True)
@@ -78,7 +77,8 @@ def app():
     for _i, folder in enumerate(existing_folders):
         # print(folder, len(glob.glob(folder + "/*.fit")))
 
-        if (n := len(glob.glob(folder + "/*.fit"))) > 0:
+        files = glob.glob(folder + "/*.fit")
+        if (n := len(files)) > 0:
             _, center, right = st.columns(3)
             with center:
                 url = f"""{home}/Analysis?folder={folder}"""
@@ -86,6 +86,19 @@ def app():
                 st.write(
                     f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
                 )
+                with st.expander(".FIT files"):
+                    for file in files:
+                        centerleft, centerright = st.columns(2)
+                        with centerleft:
+                            st.text(file)
+                        with centerright:
+                            with open(file, "rb") as f:
+                                st.download_button(
+                                    label="Download",
+                                    data=f,
+                                    file_name=file,
+                                    # mime="image/png"
+                                )
 
             with right:
                 button_delete = st.button("Delete", key=f"Delete {_i}")
