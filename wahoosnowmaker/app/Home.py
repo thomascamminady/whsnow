@@ -24,6 +24,7 @@ if __name__ == "__main__":
     query_parameters = st.experimental_get_query_params()
     st.write(query_parameters)
     if len(query_parameters) > 0:
+        st.write("here")
         webbrowser.open(DOMAIN)
 
     # Upload new data
