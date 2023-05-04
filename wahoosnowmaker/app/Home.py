@@ -79,21 +79,23 @@ def app():
         # print(folder, len(glob.glob(folder + "/*.fit")))
 
         if (n := len(glob.glob(folder + "/*.fit"))) > 0:
-            url = f"""{home}/Analysis?folder={folder}"""
+            _, center, _ = st.columns(3)
+            with center:
+                url = f"""{home}/Analysis?folder={folder}"""
 
-            st.write(
-                f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
-            )
-            col1, col2, *_ = st.columns(10)
-            with col1:
-                button_view = st.button("View", key=f"View {_i}")
-                if button_view:
-                    webbrowser.open(url)
-            with col2:
-                button_delete = st.button("Delete", key=f"Delete {_i}")
-                if button_delete:
-                    shutil.rmtree(folder)
-                    st.experimental_rerun()
+                st.write(
+                    f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
+                )
+                col1, col2, *_ = st.columns(10)
+                with col1:
+                    button_view = st.button("View", key=f"View {_i}")
+                    if button_view:
+                        webbrowser.open(url)
+                with col2:
+                    button_delete = st.button("Delete", key=f"Delete {_i}")
+                    if button_delete:
+                        shutil.rmtree(folder)
+                        st.experimental_rerun()
 
             st.divider()
 
