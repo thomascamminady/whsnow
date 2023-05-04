@@ -118,7 +118,7 @@ def app():
 
 
 st.set_page_config(
-    page_title="Upload new data.",
+    page_title="Wahoo .FIT Inspector",
     initial_sidebar_state="collapsed",
     layout="centered",
 )

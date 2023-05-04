@@ -56,7 +56,7 @@ def app(df: pd.DataFrame, folder: str):
 
 if __name__ == "__main__":
     st.set_page_config(
-        page_title="Analysis.",
+        page_title="Wahoo .FIT Inspector",
         initial_sidebar_state="collapsed",
         layout="wide",
     )
