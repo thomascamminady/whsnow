@@ -7,9 +7,9 @@ from pathlib import Path
 
 import streamlit as st
 
+from wahoosnowmaker import logger
 from wahoosnowmaker.app.create_dataset_folder import create_dataset_folder
 from wahoosnowmaker.app.markdown import centered_markdown_title
-from streamlit_javascript import st_javascript
 
 DOMAIN = """https://wahoofitness.streamlit.app"""
 # DOMAIN = """http://localhost:8501"""
@@ -62,4 +62,7 @@ if __name__ == "__main__":
             )
 
         else:
-            shutil.rmtree(folder)
+            try:
+                shutil.rmtree(folder)
+            except Exception as e:
+                logger.warning(e)
