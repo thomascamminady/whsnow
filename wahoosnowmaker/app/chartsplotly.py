@@ -11,7 +11,7 @@ from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
 @st.cache_data
-def show_chart(df):
+def show_chart(df: pd.DataFrame) -> None:
     logger.info("Creating chart.")
 
     df_long = (
@@ -34,9 +34,49 @@ def show_chart(df):
         height=3600,
         width=800,
     ).update_traces(mode="lines+markers")
+    fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    fig.for_each_annotation(lambda a: a.update(font={"size": 20}))
+    fig.for_each_annotation(lambda a: a.update(textangle=0))
 
     # Set the y-axis scale to be independent for each facet
     fig.update_yaxes(matches=None)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+@st.cache_data
+def show_map(df: pd.DataFrame) -> None:
+    fig = go.Figure()
+    for grp, dfgrp in df.groupby("file"):
+        fig.add_trace(
+            go.Scattermapbox(
+                mode="markers+lines",
+                lon=dfgrp["longitude"],
+                lat=dfgrp["latitude"],
+                marker={"size": 3},
+                text=dfgrp["file"],
+                name=grp,
+            )
+        )
+
+    min_lat, max_lat = df["latitude"].min(), df["latitude"].max()
+    min_lon, max_lon = df["longitude"].min(), df["longitude"].max()
+    center_lat = (min_lat + max_lat) / 2
+    center_lon = (min_lon + max_lon) / 2
+    max_bound = max(abs(max_lon - min_lon), abs(max_lat - min_lat)) * 111
+    zoom = 11.5 - np.log(max_bound)
+
+    fig.update_geos(fitbounds="locations")
+    fig.update_layout(
+        margin={"l": 0, "t": 0, "b": 0, "r": 0},
+        mapbox={
+            "center": {"lon": center_lon, "lat": center_lat},
+            "style": "open-street-map",
+            # "style": "stamen-terrain",
+            # "center": {"lon": -20, "lat": -20},
+            "zoom": zoom,
+        },
+    )
+
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -47,55 +87,9 @@ def cached_parse_folder(dataset_folder):
 
 def chart(dataset_folder: str):
     uploaded_files = glob.glob(dataset_folder + "/*.fit")
-    # st.write(uploaded_files)
 
     if uploaded_files is not None:
         if len(uploaded_files) > 0:
             df = cached_parse_folder(dataset_folder).to_pandas()
-
-            # fig = px.line_mapbox(
-            #     df.to_pandas(),
-            #     lat="latitude",
-            #     lon="longitude",
-            #     color="file",
-            #     zoom=3,
-            #     height=1000,
-            # )
-
-            fig = go.Figure()
-            for grp, dfgrp in df.groupby("file"):
-                fig.add_trace(
-                    go.Scattermapbox(
-                        mode="markers+lines",
-                        lon=dfgrp["longitude"],
-                        lat=dfgrp["latitude"],
-                        marker={"size": 3},
-                        text=dfgrp["file"],
-                        name=grp,
-                    )
-                )
-
-            # meanlon = np.nanmean(df.to_pandas()["longitude"])
-            # meanlat = np.nanmean(df.to_pandas()["latitude"])
-            min_lat, max_lat = df["latitude"].min(), df["latitude"].max()
-            min_lon, max_lon = df["longitude"].min(), df["longitude"].max()
-            center_lat = (min_lat + max_lat) / 2
-            center_lon = (min_lon + max_lon) / 2
-            max_bound = max(abs(max_lon - min_lon), abs(max_lat - min_lat)) * 111
-            zoom = 11.5 - np.log(max_bound)
-
-            fig.update_geos(fitbounds="locations")
-            fig.update_layout(
-                margin={"l": 0, "t": 0, "b": 0, "r": 0},
-                mapbox={
-                    "center": {"lon": center_lon, "lat": center_lat},
-                    "style": "open-street-map",
-                    # "style": "stamen-terrain",
-                    # "center": {"lon": -20, "lat": -20},
-                    "zoom": zoom,
-                },
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
+            show_map(df)
             show_chart(df)

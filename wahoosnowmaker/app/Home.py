@@ -54,6 +54,8 @@ if __name__ == "__main__":
     existing_folders.sort(reverse=True)
     for _i, folder in enumerate(existing_folders):
         # print(folder, len(glob.glob(folder + "/*.fit")))
+        st.write(folder)
+        st.write(glob.glob(folder + "/*.fit"))
         if (n := len(glob.glob(folder + "/*.fit"))) > 0:
             url = f"""{DOMAIN}/Analysis?folder={folder}"""
 
