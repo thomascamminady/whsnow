@@ -10,6 +10,7 @@ class ColumnName:
     aliases: list[str]
 
     def to_dict(self) -> dict[str, str]:
+        """Returns dictionary of names and aliases."""
         return {alias: self.name for alias in self.aliases}
 
 

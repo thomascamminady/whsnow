@@ -8,13 +8,10 @@ from pathlib import Path
 import streamlit as st
 
 from wahoosnowmaker import logger
+from wahoosnowmaker.app.domain import domain as home
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
 
-DOMAIN = """https://wahoofitness.streamlit.app"""
-# DOMAIN = """http://localhost:8501"""
 
-
-# See: https://docs.streamlit.io/knowledge-base/deploy/authentication-without-sso
 def check_password():
     """Returns `True` if the user had the correct password."""
 
@@ -44,17 +41,7 @@ def check_password():
         return True
 
 
-if check_password():
-    app()
-
-
 def app():
-    st.set_page_config(
-        page_title="Upload new data.",
-        # initial_sidebar_state="collapsed",
-        layout="wide",
-    )
-
     # Very crude way to redirect to base page without parameters
     st.experimental_set_query_params()
 
@@ -81,7 +68,7 @@ def app():
                 os.remove(file)
         # redirect to analysis view
         if len(uploaded_files) > 0:
-            url = f"""{DOMAIN}/Analysis?folder={folder}"""
+            url = f"""{home}/Analysis?folder={folder}"""
             webbrowser.open(url)
 
     # Inspect existing data
@@ -92,14 +79,35 @@ def app():
         # print(folder, len(glob.glob(folder + "/*.fit")))
 
         if (n := len(glob.glob(folder + "/*.fit"))) > 0:
-            url = f"""{DOMAIN}/Analysis?folder={folder}"""
+            url = f"""{home}/Analysis?folder={folder}"""
 
             st.write(
                 f"""[{folder.split("/")[-1].upper()}]({url}) (Dataset with {n} file{"" if n==1 else "s"}.)"""
             )
+            col1, col2, *_ = st.columns(10)
+            with col1:
+                button_view = st.button("View", key=f"View {_i}")
+                if button_view:
+                    webbrowser.open(url)
+            with col2:
+                button_delete = st.button("Delete", key=f"Delete {_i}")
+                if button_delete:
+                    shutil.rmtree(folder)
+                    st.experimental_rerun()
+
+            st.divider()
 
         else:
             try:
                 shutil.rmtree(folder)
             except Exception as e:
                 logger.warning(e)
+
+
+st.set_page_config(
+    page_title="Upload new data.",
+    initial_sidebar_state="collapsed",
+    layout="wide",
+)
+if check_password():
+    app()

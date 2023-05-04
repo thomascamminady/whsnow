@@ -1,15 +1,20 @@
 import glob as glob
+import webbrowser
 
 import streamlit as st
 
+from wahoosnowmaker.app.domain import domain as homepage
 from wahoosnowmaker.app.viz.chartsplotly import chart
 
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Analysis.",
-        # initial_sidebar_state="collapsed",
+        initial_sidebar_state="collapsed",
         layout="wide",
     )
+    button = st.button("Home")
+    if button:
+        webbrowser.open(homepage)
     query_parameters = st.experimental_get_query_params()
     if query_parameters is not None:
         if "folder" in query_parameters.keys():

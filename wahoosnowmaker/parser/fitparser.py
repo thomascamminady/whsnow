@@ -17,11 +17,13 @@ class FitParsingError(Exception):
         super().__init__(self.message)
 
     def __str__(self):
+        """To string method."""
         return f"[FIT Parsing] Error parsing {self.fit_file}: {self.message}"
 
 
 class FitParser(ABC):
     def fit_to_records_df(self, fit_file: str) -> pl.LazyFrame:
+        """Converts .FIT file to records dataframe."""
         try:
             return self._fit_to_records_df(fit_file)
         except Exception as e:
