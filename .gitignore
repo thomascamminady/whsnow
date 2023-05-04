@@ -161,3 +161,5 @@ cython_debug/
 .venv/
 logs/
 data/
+.streamlit/secrets.toml
+
