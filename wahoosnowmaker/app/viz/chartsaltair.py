@@ -1,13 +1,8 @@
-# import glob
-
 # import altair as alt
 # import folium
 # import streamlit as st
-# import vegafusion as vf
-# from streamlit_folium import st_folium
 
 # from wahoosnowmaker import logger
-# from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
 # @st.cache_data
@@ -40,11 +35,6 @@
 #     st.altair_chart(chart, use_container_width=True)
 
 
-# @st.cache_data  # should receive the files, not the folder
-# def cached_parse_folder(dataset_folder):
-#     return parse_folder(dataset_folder)
-
-
 # # @st.cache_data
 # def create_map(df):
 #     logger.info("Creating map.")
@@ -67,7 +57,9 @@
 #         points = [
 #             (lat, lon)
 #             for lat, lon in zip(
-#                 groupdf["latitude"].to_numpy(), groupdf["longitude"].to_numpy()
+#                 groupdf["latitude"].to_numpy(),
+#                 groupdf["longitude"].to_numpy(),
+#                 strict=True,
 #             )
 #         ]
 #         try:
@@ -77,19 +69,3 @@
 #         except Exception as e:
 #             logger.info(e)
 #     return map
-
-
-# def chart(dataset_folder: str):
-#     uploaded_files = glob.glob(dataset_folder + "/*.fit")
-#     st.write(uploaded_files)
-
-#     if uploaded_files is not None:
-#         if len(uploaded_files) > 0:
-#             vf.enable()
-#             df = cached_parse_folder(dataset_folder)
-#             # st.map(df.to_pandas())
-#             # center on Liberty Bell, add marker
-
-#             # call to render Folium map in Streamlit
-#             st_folium(create_map(df.to_pandas()), width=1200, returned_objects=[])
-#             show_chart(df.to_pandas())

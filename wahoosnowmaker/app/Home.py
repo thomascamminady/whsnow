@@ -53,8 +53,6 @@ def app():
     existing_folders = glob.glob("data/*")
     existing_folders.sort(reverse=True)
     for _i, folder in enumerate(existing_folders):
-        # print(folder, len(glob.glob(folder + "/*.fit")))
-
         files = glob.glob(folder + "/*.fit")
         if (n := len(files)) > 0:
             url = f"""{home}/Analysis?folder={folder}"""
@@ -75,12 +73,7 @@ def app():
                         st.text(file)
                     with centerright:
                         with open(file, "rb") as f:
-                            st.download_button(
-                                label="Download",
-                                data=f,
-                                file_name=file,
-                                # mime="image/png"
-                            )
+                            st.download_button(label="Download", data=f, file_name=file)
 
         else:
             try:
