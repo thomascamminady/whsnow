@@ -4,10 +4,14 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from wahoosnowmaker import logger
+from wahoosnowmaker.app.viz.map_calculations import (
+    get_center_lat_lon,
+    get_zoom_level,
+)
 
 
 @st.cache_data
-def show_chart(df: pd.DataFrame) -> None:
+def show_chart(df: pd.DataFrame, fields_to_plot: list[str]) -> None:
     logger.info("Creating chart.")
 
     df_long = (
@@ -21,36 +25,17 @@ def show_chart(df: pd.DataFrame) -> None:
         .reset_index()
         .drop(columns=["index"])
     )
-    ideal_order = [
-        "speed",
-        "altitude",
-        "heartrate",
-        "cadence",
-        "temperature",
-        "distance",
-    ]
-    custom_order = []
-    # take everything from the ideal order that exists in the dataframe
-    for item in ideal_order:
-        if item in df.columns:
-            custom_order.append(item)
-    # take everything from the dataframe that is not yet in the custom order
-    for item in df.columns:
-        if item in ["Elapsed time (seconds)", "file"]:
-            continue
-        if item not in custom_order:
-            custom_order.append(item)
-
+    df_long = df_long.loc[df_long["type"].isin(fields_to_plot)]
     fig = px.line(
         df_long,
         x="Elapsed time (seconds)",
         y="value",
         color="file",
         facet_row="type",
-        height=4000,
+        height=len(fields_to_plot) * 300,
         facet_row_spacing=0.01,
         width=800,
-        category_orders={"type": custom_order},
+        category_orders={"type": fields_to_plot},
     )
 
     fig.update_traces(mode="lines+markers")
@@ -68,16 +53,7 @@ def show_chart(df: pd.DataFrame) -> None:
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
 
-    st.plotly_chart(fig, use_container_width=True)
-
-
-@st.cache_data
-def get_center_lat_lon(df: pd.DataFrame, lat: str = "latitude", lon: str = "longitude"):
-    min_lat, max_lat = df[lat].min(), df[lat].max()
-    min_lon, max_lon = df[lon].min(), df[lon].max()
-    center_lat = (min_lat + max_lat) / 2
-    center_lon = (min_lon + max_lon) / 2
-    return {"lat": center_lat, "lon": center_lon}
+    st.plotly_chart(fig, use_container_width=True, theme=None)
 
 
 @st.cache_data
@@ -87,6 +63,8 @@ def show_map(
     mapbox_style: str = "carto-positron",
     color_scale: str = "viridis",
 ) -> None:
+    logger.info("Creating map.")
+
     if color_attribute != "file":
         fig = px.scatter_mapbox(
             data_frame=df,
@@ -110,18 +88,18 @@ def show_map(
     else:
         fig = px.line_mapbox(df, lat="latitude", lon="longitude", color="file")
 
+    zoom = get_zoom_level(df["latitude"], df["longitude"], fudge=0.1)
     fig.update_layout(
         margin={"l": 0, "t": 0, "b": 0, "r": 0},
         height=800,
+        autosize=True,
         mapbox={
             "style": mapbox_style,
             "center": go.layout.mapbox.Center(**get_center_lat_lon(df)),
             "pitch": 0,
-            "zoom": 10,
+            "zoom": zoom,
         },
         mapbox_accesstoken=st.secrets["mapbox_api_key"],
-    )
-    fig.update_layout(
         coloraxis_colorbar={
             "len": 0.5,
             "xanchor": "right",
@@ -129,11 +107,7 @@ def show_map(
             "yanchor": "bottom",
             "y": 0.1,
             "thickness": 10,
-        }
+        },
     )
 
-    fig.update_geos(
-        fitbounds="locations"
-    )  # I don't think this is actually doing anything
-
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, theme=None)
