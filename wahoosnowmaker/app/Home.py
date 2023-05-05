@@ -10,36 +10,8 @@ from wahoosnowmaker import logger
 from wahoosnowmaker.app.domain import domain as home
 from wahoosnowmaker.app.markdown import centered_markdown_title
 from wahoosnowmaker.app.saveload import load_name
+from wahoosnowmaker.app.security import check_password
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
-
-
-def check_password():
-    """Returns `True` if the user had the correct password."""
-
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == st.secrets["password"]:
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # don't store password
-        else:
-            st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        # First run, show input for password.
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        return False
-    elif not st.session_state["password_correct"]:
-        # Password not correct, show input + error.
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        st.error("😕 Password incorrect")
-        return False
-    else:
-        # Password correct.
-        return True
 
 
 def app():
@@ -84,7 +56,7 @@ def app():
         # print(folder, len(glob.glob(folder + "/*.fit")))
 
         files = glob.glob(folder + "/*.fit")
-        if (len(files)) > 0:
+        if (n := len(files)) > 0:
             url = f"""{home}/Analysis?folder={folder}"""
 
             left, right = st.columns((4, 1))
@@ -96,19 +68,19 @@ def app():
                 if button_delete:
                     shutil.rmtree(folder)
                     st.experimental_rerun()
-            # with st.expander(f"""See {n} .fit file{"" if n==1 else "s"}"""):
-            #     for file in files:
-            #         centerleft, centerright = st.columns((4, 1))
-            #         with centerleft:
-            #             st.text(file)
-            #         with centerright:
-            #             with open(file, "rb") as f:
-            #                 st.download_button(
-            #                     label="Download",
-            #                     data=f,
-            #                     file_name=file,
-            #                     # mime="image/png"
-            #                 )
+            with st.expander(f"""See {n} .fit file{"" if n==1 else "s"}"""):
+                for file in files:
+                    centerleft, centerright = st.columns((4, 1))
+                    with centerleft:
+                        st.text(file)
+                    with centerright:
+                        with open(file, "rb") as f:
+                            st.download_button(
+                                label="Download",
+                                data=f,
+                                file_name=file,
+                                # mime="image/png"
+                            )
 
         else:
             try:
@@ -117,10 +89,11 @@ def app():
                 logger.warning(e)
 
 
-st.set_page_config(
-    page_title="Wahoo .FIT Inspector",
-    initial_sidebar_state="collapsed",
-    layout="centered",
-)
-if check_password():
-    app()
+if __name__ == "__main__":
+    st.set_page_config(
+        page_title="Wahoo .FIT Inspector",
+        initial_sidebar_state="collapsed",
+        layout="centered",
+    )
+    if check_password():
+        app()

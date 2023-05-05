@@ -80,18 +80,15 @@ def show_map(df: pd.DataFrame, color_attribute: str = "file") -> None:
     #             # name=grp,
     #         )
     #     )
-    fig = px.scatter_mapbox(
-        data_frame=df,
-        # mode="markers+lines",
-        lon="longitude",
-        lat="latitude",
-        color=color_attribute,
-        color_continuous_scale="inferno"
-        # marker={"size": 8},
-        # name=grp,
-    )
+
+    fig = px.line_mapbox(df, lat="latitude", lon="longitude", color="file")
     fig.add_traces(
-        px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data,
+        px.scatter_mapbox(
+            data_frame=df,
+            lon="longitude",
+            lat="latitude",
+            color=color_attribute,
+        ).data
     )
 
     min_lat, max_lat = df["latitude"].min(), df["latitude"].max()

@@ -35,7 +35,6 @@ def app(df: pd.DataFrame, folder: str):
     with tab1:
         dataset_notes = st.text_area(" ", value=load_notes(folder), height=300)
         save_notes(folder, dataset_notes)
-        # st.button("Save notes")
     with tab2:
         st.write(df)
     with tab3:
