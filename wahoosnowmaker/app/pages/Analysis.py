@@ -13,6 +13,7 @@ from wahoosnowmaker.app.saveload import (
     save_notes,
 )
 from wahoosnowmaker.app.viz.chartsplotly import show_chart, show_map
+from wahoosnowmaker.app.viz.map_styles import styles
 from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
@@ -49,11 +50,19 @@ def app(df: pd.DataFrame, folder: str):
             with centerright:
                 with open(file, "rb") as f:
                     st.download_button(label="Download", data=f, file_name=file)
-    default = int(np.argwhere(df.columns == "file")[0][0])
-    color_by = st.selectbox("Color", df.columns, default)
-    if color_by is None:
-        color_by = "file"
-    show_map(df, color_attribute=color_by)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        default = int(np.argwhere(df.columns == "file")[0][0])
+        color_by = st.selectbox("Color map trace", df.columns, default)
+        if color_by is None:
+            color_by = "file"
+    with col2:
+        default = int(np.argwhere(np.array(styles) == "carto-positron")[0][0])
+        map_style = st.selectbox("Map style", styles, default)
+        if map_style is None:
+            map_style = "carto-positron"
+    show_map(df, color_attribute=color_by, mapbox_style=map_style)
     show_chart(df)
 
 

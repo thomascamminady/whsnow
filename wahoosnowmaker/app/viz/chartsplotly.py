@@ -54,9 +54,15 @@ def show_chart(df: pd.DataFrame) -> None:
     )
 
     fig.update_traces(mode="lines+markers")
-    fig.for_each_annotation(lambda a: a.update(text=" " + a.text.split("=")[-1]))
-    fig.for_each_annotation(lambda a: a.update(font={"size": 20}))
-    fig.for_each_annotation(lambda a: a.update(textangle=0))
+    fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    for i in range(len(df_long["type"].unique())):
+        annotation = fig.layout.annotations[i].text  # type: ignore
+        fig.layout[  # type: ignore
+            f"""yaxis{"" if i==0 else str(i+1)}"""  # type: ignore
+        ].title.text = annotation  # type: ignore
+        fig.layout.annotations[i].text = ""  # type: ignore
+    # fig.for_each_annotation(lambda a: a.update(font={"size": 20}))
+    # fig.for_each_annotation(lambda a: a.update(textangle=0))
     fig.update_yaxes(matches=None)
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
@@ -65,7 +71,11 @@ def show_chart(df: pd.DataFrame) -> None:
 
 
 @st.cache_data
-def show_map(df: pd.DataFrame, color_attribute: str = "file") -> None:
+def show_map(
+    df: pd.DataFrame,
+    color_attribute: str = "file",
+    mapbox_style: str = "carto-positron",
+) -> None:
     # fig = go.Figure()
     # for grp, dfgrp in df.groupby("file"):
     #     fig.add_trace(
@@ -95,29 +105,12 @@ def show_map(df: pd.DataFrame, color_attribute: str = "file") -> None:
     center_lat = (min_lat + max_lat) / 2
     min_lon, max_lon = df["longitude"].min(), df["longitude"].max()
     center_lon = (min_lon + max_lon) / 2
-    # free_styles = [
-    #     "open-street-map",
-    #     "carto-positron",
-    #     "carto-darkmatter",
-    #     "stamen-terrain",
-    #     "stamen-toner",
-    #     "stamen-watercolor",
-    # ]
-    # mapbox_styles = [
-    #     "basic",
-    #     "streets",
-    #     "outdoors",
-    #     "light",
-    #     "dark",
-    #     "satellite",
-    #     "satellite-streets",
-    # ]
 
     fig.update_layout(
         margin={"l": 0, "t": 0, "b": 0, "r": 0},
         height=800,
         mapbox={
-            "style": "carto-positron",
+            "style": mapbox_style,
             "center": go.layout.mapbox.Center(lat=center_lat, lon=center_lon),
             "pitch": 0,
             "zoom": 10,
