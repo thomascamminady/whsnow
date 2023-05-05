@@ -87,23 +87,28 @@ def show_map(
     mapbox_style: str = "carto-positron",
     color_scale: str = "viridis",
 ) -> None:
-    fig = px.scatter_mapbox(
-        data_frame=df,
-        lon="longitude",
-        lat="latitude",
-        color=color_attribute,
-        color_continuous_scale=color_scale,
-    )
+    if color_attribute != "file":
+        fig = px.scatter_mapbox(
+            data_frame=df,
+            lon="longitude",
+            lat="latitude",
+            color=color_attribute,
+            color_continuous_scale=color_scale,
+        )
 
-    fig.add_traces(
-        px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data
-    )
+        fig.add_traces(
+            px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data
+        )
 
-    # We first have to create the scatter mapbox component of the plot before
-    # adding the line. Otherwise, we can't control the color scale.
-    # But this does not look good because the line should be below the scatter points
-    # So we now switch order.
-    fig.data = (fig.data[1], fig.data[0])
+        # We first have to create the scatter mapbox component of the plot before
+        # adding the line. Otherwise, we can't control the color scale.
+        # But this does not look good because the line should be below the scatter points
+        # So we now switch order.
+        # first take the the second n/2 elements of the fig.data array and then the first n/2
+        n = len(fig.data)
+        fig.data = [fig.data[(i + n // 2) % n] for i in range(n)]
+    else:
+        fig = px.line_mapbox(df, lat="latitude", lon="longitude", color="file")
 
     fig.update_layout(
         margin={"l": 0, "t": 0, "b": 0, "r": 0},
