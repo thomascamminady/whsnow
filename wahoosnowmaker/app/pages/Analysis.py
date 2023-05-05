@@ -13,7 +13,7 @@ from wahoosnowmaker.app.saveload import (
     save_notes,
 )
 from wahoosnowmaker.app.viz.chartsplotly import show_chart, show_map
-from wahoosnowmaker.app.viz.map_styles import styles
+from wahoosnowmaker.app.viz.styles import colorscales, map_styles
 from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
@@ -32,7 +32,9 @@ def app(df: pd.DataFrame, folder: str):
         unsafe_allow_html=True,
     )
 
-    tab1, tab2, tab3, tab4 = st.tabs(["Notes", "Data", "Rename", "Download"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ["Notes", "Data", "Rename", "Download", "Options"]
+    )
     with tab1:
         dataset_notes = st.text_area(" ", value=load_notes(folder), height=300)
         save_notes(folder, dataset_notes)
@@ -50,19 +52,23 @@ def app(df: pd.DataFrame, folder: str):
             with centerright:
                 with open(file, "rb") as f:
                     st.download_button(label="Download", data=f, file_name=file)
-
-    col1, col2 = st.columns(2)
-    with col1:
+    with tab5:
         default = int(np.argwhere(df.columns == "file")[0][0])
         color_by = st.selectbox("Color map trace", df.columns, default)
         if color_by is None:
             color_by = "file"
-    with col2:
-        default = int(np.argwhere(np.array(styles) == "carto-positron")[0][0])
-        map_style = st.selectbox("Map style", styles, default)
+        default = int(np.argwhere(np.array(map_styles) == "carto-positron")[0][0])
+        map_style = st.selectbox("Map style", map_styles, default)
         if map_style is None:
             map_style = "carto-positron"
-    show_map(df, color_attribute=color_by, mapbox_style=map_style)
+
+        default = int(np.argwhere(np.array(colorscales) == "viridis")[0][0])
+        colorscale = st.selectbox("Color scale", colorscales, default)
+        if colorscale is None:
+            colorscale = "viridis"
+    show_map(
+        df, color_attribute=color_by, mapbox_style=map_style, color_scale=colorscale
+    )
     show_chart(df)
 
 

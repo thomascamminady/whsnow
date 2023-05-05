@@ -54,6 +54,7 @@ def show_chart(df: pd.DataFrame) -> None:
     )
 
     fig.update_traces(mode="lines+markers")
+    fig.update_traces(marker={"size": 4})
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     for i in range(len(df_long["type"].unique())):
         annotation = fig.layout.annotations[i].text  # type: ignore
@@ -71,47 +72,45 @@ def show_chart(df: pd.DataFrame) -> None:
 
 
 @st.cache_data
+def get_center_lat_lon(df: pd.DataFrame, lat: str = "latitude", lon: str = "longitude"):
+    min_lat, max_lat = df[lat].min(), df[lat].max()
+    min_lon, max_lon = df[lon].min(), df[lon].max()
+    center_lat = (min_lat + max_lat) / 2
+    center_lon = (min_lon + max_lon) / 2
+    return {"lat": center_lat, "lon": center_lon}
+
+
+@st.cache_data
 def show_map(
     df: pd.DataFrame,
     color_attribute: str = "file",
     mapbox_style: str = "carto-positron",
+    color_scale: str = "viridis",
 ) -> None:
-    # fig = go.Figure()
-    # for grp, dfgrp in df.groupby("file"):
-    #     fig.add_trace(
-    #         px.scatter_geo(
-    #             data_frame=dfgrp,
-    #             # mode="markers+lines",
-    #             lon="longitude",
-    #             lat="latitude",
-    #             color="altitude",
-    #             g
-    #             # marker={"size": 8},
-    #             # name=grp,
-    #         )
-    #     )
-
-    fig = px.line_mapbox(df, lat="latitude", lon="longitude", color="file")
-    fig.add_traces(
-        px.scatter_mapbox(
-            data_frame=df,
-            lon="longitude",
-            lat="latitude",
-            color=color_attribute,
-        ).data
+    fig = px.scatter_mapbox(
+        data_frame=df,
+        lon="longitude",
+        lat="latitude",
+        color=color_attribute,
+        color_continuous_scale=color_scale,
     )
 
-    min_lat, max_lat = df["latitude"].min(), df["latitude"].max()
-    center_lat = (min_lat + max_lat) / 2
-    min_lon, max_lon = df["longitude"].min(), df["longitude"].max()
-    center_lon = (min_lon + max_lon) / 2
+    fig.add_traces(
+        px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data
+    )
+
+    # We first have to create the scatter mapbox component of the plot before
+    # adding the line. Otherwise, we can't control the color scale.
+    # But this does not look good because the line should be below the scatter points
+    # So we now switch order.
+    fig.data = (fig.data[1], fig.data[0])
 
     fig.update_layout(
         margin={"l": 0, "t": 0, "b": 0, "r": 0},
         height=800,
         mapbox={
             "style": mapbox_style,
-            "center": go.layout.mapbox.Center(lat=center_lat, lon=center_lon),
+            "center": go.layout.mapbox.Center(**get_center_lat_lon(df)),
             "pitch": 0,
             "zoom": 10,
         },
@@ -128,6 +127,8 @@ def show_map(
         }
     )
 
-    fig.update_geos(fitbounds="locations")
+    fig.update_geos(
+        fitbounds="locations"
+    )  # I don't think this is actually doing anything
 
     st.plotly_chart(fig, use_container_width=True)
