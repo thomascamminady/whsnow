@@ -8,6 +8,7 @@ from wahoosnowmaker.app.viz.map_calculations import (
     get_center_lat_lon,
     get_zoom_level,
 )
+from wahoosnowmaker.namespace import DefaultNamespace
 
 
 @st.cache_data
@@ -17,7 +18,10 @@ def show_chart(df: pd.DataFrame, fields_to_plot: list[str]) -> None:
     df_long = (
         pd.melt(
             df,
-            id_vars=["Elapsed time (seconds)", "file"],
+            id_vars=[
+                DefaultNamespace.column_elapsed_time,
+                DefaultNamespace.default_color_by,
+            ],
             value_name="value",
             var_name="type",
         )
@@ -26,11 +30,12 @@ def show_chart(df: pd.DataFrame, fields_to_plot: list[str]) -> None:
         .drop(columns=["index"])
     )
     df_long = df_long.loc[df_long["type"].isin(fields_to_plot)]
+
     fig = px.line(
         df_long,
-        x="Elapsed time (seconds)",
+        x=DefaultNamespace.column_elapsed_time,
         y="value",
-        color="file",
+        color=DefaultNamespace.default_color_by,
         facet_row="type",
         height=len(fields_to_plot) * 300,
         facet_row_spacing=0.01,
@@ -59,23 +64,28 @@ def show_chart(df: pd.DataFrame, fields_to_plot: list[str]) -> None:
 @st.cache_data
 def show_map(
     df: pd.DataFrame,
-    color_attribute: str = "file",
+    color_attribute: str = DefaultNamespace.default_color_by,
     mapbox_style: str = "carto-positron",
     color_scale: str = "viridis",
 ) -> None:
     logger.info("Creating map.")
 
-    if color_attribute != "file":
+    if color_attribute != DefaultNamespace.default_color_by:
         fig = px.scatter_mapbox(
             data_frame=df,
-            lon="longitude",
-            lat="latitude",
+            lon=DefaultNamespace.column_longitude,
+            lat=DefaultNamespace.column_latitude,
             color=color_attribute,
             color_continuous_scale=color_scale,
         )
 
         fig.add_traces(
-            px.line_mapbox(df, lat="latitude", lon="longitude", color="file").data
+            px.line_mapbox(
+                df,
+                lat=DefaultNamespace.column_latitude,
+                lon=DefaultNamespace.column_longitude,
+                color=DefaultNamespace.default_color_by,
+            ).data
         )
 
         # We first have to create the scatter mapbox component of the plot before
@@ -86,9 +96,18 @@ def show_map(
         n = len(fig.data)
         fig.data = [fig.data[(i + n // 2) % n] for i in range(n)]
     else:
-        fig = px.line_mapbox(df, lat="latitude", lon="longitude", color="file")
+        fig = px.line_mapbox(
+            df,
+            lat=DefaultNamespace.column_latitude,
+            lon=DefaultNamespace.column_longitude,
+            color=DefaultNamespace.default_color_by,
+        )
 
-    zoom = get_zoom_level(df["latitude"], df["longitude"], fudge=0.1)
+    zoom = get_zoom_level(
+        df[DefaultNamespace.column_latitude],
+        df[DefaultNamespace.column_longitude],
+        fudge=0.1,
+    )
     fig.update_layout(
         margin={"l": 0, "t": 0, "b": 0, "r": 0},
         height=800,

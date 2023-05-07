@@ -2,7 +2,8 @@ import os
 
 import polars as pl
 
-from wahoosnowmaker.parser.naming_mapping import Columns
+from wahoosnowmaker.namespace import Namespace
+from wahoosnowmaker.parser.records_naming_mapping import Columns
 
 
 def drop_columns_all_nans(_df: pl.DataFrame) -> pl.DataFrame:
@@ -15,7 +16,7 @@ def assign_file(_df: pl.DataFrame, file: str):
 
 def parse_timestamp(
     _df: pl.DataFrame,
-    column: str = "timestamp",
+    column: str = Namespace.column_timestamp,
     format: str = "%Y-%m-%dT%H:%M:%S.%fZ",
 ) -> pl.DataFrame:
     if _df[column].dtype == pl.Datetime:
@@ -29,16 +30,16 @@ def parse_timestamp(
 def convert_semicircles_to_lat_lon(_df: pl.DataFrame):
     return _df.with_columns(
         [
-            pl.col("latitude") * 180 / 2**31,
-            pl.col("longitude") * 180 / 2**31,
+            pl.col(Namespace.column_latitude) * 180 / 2**31,
+            pl.col(Namespace.column_longitude) * 180 / 2**31,
         ]
     )
 
 
 def compute_elapsed_seconds(_df: pl.DataFrame):
     return _df.with_columns(
-        (pl.col("timestamp") - pl.col("timestamp").min())
-        .alias("Elapsed time (seconds)")
+        (pl.col(Namespace.column_timestamp) - pl.col(Namespace.column_timestamp).min())
+        .alias(Namespace.column_elapsed_time)
         .dt.seconds()
     )
 

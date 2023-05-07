@@ -4,17 +4,16 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from wahoosnowmaker.app.domain import domain as homepage
 from wahoosnowmaker.app.markdown import centered_markdown_title
-from wahoosnowmaker.app.saveload import (
+from wahoosnowmaker.app.viz.chartsplotly import show_chart, show_map
+from wahoosnowmaker.namespace import DefaultNamespace
+from wahoosnowmaker.parser.parse_folder import parse_folder
+from wahoosnowmaker.utils.saveload import (
     load_name,
     load_notes,
     save_name,
     save_notes,
 )
-from wahoosnowmaker.app.viz.chartsplotly import show_chart, show_map
-from wahoosnowmaker.app.viz.styles import colorscales, map_styles
-from wahoosnowmaker.parser.parse_folder import parse_folder
 
 
 @st.cache_data  # should receive the files, not the folder
@@ -24,7 +23,7 @@ def cached_parse_folder(dataset_folder):
 
 def show_analysis(df: pd.DataFrame, folder: str):
     st.write(
-        centered_markdown_title("Wahoo .fit Inspector", homepage),
+        centered_markdown_title(DefaultNamespace.app_name, DefaultNamespace.domain),
         unsafe_allow_html=True,
     )
     st.write(
@@ -36,33 +35,28 @@ def show_analysis(df: pd.DataFrame, folder: str):
         ["Options", "Data", "Rename", "Download", "Notes"]
     )
     with tab1:
-        default = int(np.argwhere(df.columns == "file")[0][0])
+        default = int(
+            np.argwhere(df.columns == DefaultNamespace.default_color_by)[0][0]
+        )
         color_by = st.selectbox("Color map trace", df.columns, default)
         if color_by is None:
-            color_by = "file"
-        default = int(np.argwhere(np.array(map_styles) == "carto-positron")[0][0])
-        map_style = st.selectbox("Map style", map_styles, default)
-        if map_style is None:
-            map_style = "carto-positron"
+            color_by = DefaultNamespace.default_color_by
 
-        default = int(np.argwhere(np.array(colorscales) == "viridis")[0][0])
-        colorscale = st.selectbox("Color scale", colorscales, default)
-        if colorscale is None:
-            colorscale = "viridis"
+        map_style = st.selectbox("Map style", DefaultNamespace.map_styles, 1)
 
-        options = list(set(df.columns) - {"Elapsed time (seconds)", "file"})
-        default_options = [
-            option
-            for option in [
-                "power",
-                "speed",
-                "altitude",
-                "distance",
-                "heartrate",
-                "temperature",
-            ]
-            if option in options
-        ]
+        colorscale = st.selectbox("Color scale", DefaultNamespace.colorscales, 0)
+
+        options = list(
+            set(df.columns)
+            - {
+                DefaultNamespace.column_elapsed_time,
+                DefaultNamespace.default_color_by,
+            }
+        )
+        options.sort()
+        default_options = list(
+            set(DefaultNamespace.standard_charts_to_display).intersection(options)
+        )
         chart_options = st.multiselect("Charts", options, default_options)
 
     with tab2:
@@ -90,8 +84,8 @@ def show_analysis(df: pd.DataFrame, folder: str):
     show_map(
         df, color_attribute=color_by, mapbox_style=map_style, color_scale=colorscale
     )
-
-    show_chart(df, chart_options)
+    if len(chart_options) > 0:
+        show_chart(df, chart_options)
 
 
 def app():
@@ -110,7 +104,7 @@ def app():
 
 if __name__ == "__main__":
     st.set_page_config(
-        page_title="Wahoo .FIT Inspector",
+        page_title=DefaultNamespace.app_name,
         initial_sidebar_state="collapsed",
         layout="wide",
     )

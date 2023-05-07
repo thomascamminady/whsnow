@@ -2,9 +2,15 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from wahoosnowmaker.namespace import DefaultNamespace
+
 
 @st.cache_data
-def get_center_lat_lon(df: pd.DataFrame, lat: str = "latitude", lon: str = "longitude"):
+def get_center_lat_lon(
+    df: pd.DataFrame,
+    lat: str = DefaultNamespace.column_latitude,
+    lon: str = DefaultNamespace.column_longitude,
+):
     min_lat, max_lat = df[lat].min(), df[lat].max()
     min_lon, max_lon = df[lon].min(), df[lon].max()
     center_lat = (min_lat + max_lat) / 2

@@ -61,5 +61,4 @@ class GarminFitSDKParser(FitParser):
             }
             for record in records
         ]
-
         return pl.DataFrame(records).lazy()

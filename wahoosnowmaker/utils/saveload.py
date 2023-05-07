@@ -1,9 +1,11 @@
 import os
 import os.path
 
+from wahoosnowmaker.namespace import Namespace
 
-def notes_file(folder: str) -> str:
-    return os.path.join(folder, "notes.txt")
+
+def notes_file(folder: str, name: str = Namespace.notes_file_name) -> str:
+    return os.path.join(folder, name)
 
 
 def save_notes(folder: str, text: str) -> None:
@@ -19,8 +21,8 @@ def load_notes(folder: str) -> str:
         return f.read()
 
 
-def name_file(folder: str) -> str:
-    return os.path.join(folder, "name.txt")
+def name_file(folder: str, name: str = Namespace.name_file_name) -> str:
+    return os.path.join(folder, name)
 
 
 def save_name(folder: str, text: str) -> None:

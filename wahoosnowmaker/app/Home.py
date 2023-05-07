@@ -7,15 +7,15 @@ from pathlib import Path
 import streamlit as st
 
 from wahoosnowmaker import logger
-from wahoosnowmaker.app.domain import domain as home
 from wahoosnowmaker.app.markdown import centered_markdown_title
-from wahoosnowmaker.app.saveload import load_name
 from wahoosnowmaker.app.security import check_password
+from wahoosnowmaker.namespace import DefaultNamespace
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
+from wahoosnowmaker.utils.saveload import load_name
 
 
 def app():
-    st.write(centered_markdown_title("Wahoo .FIT Inspector"), unsafe_allow_html=True)
+    st.write(centered_markdown_title(DefaultNamespace.app_name), unsafe_allow_html=True)
 
     # Very crude way to redirect to base page without parameters
     st.experimental_set_query_params()
@@ -42,7 +42,7 @@ def app():
                 os.remove(file)
         # redirect to analysis view
         if len(uploaded_files) > 0:
-            url = f"""{home}/Analysis?folder={folder}"""
+            url = f"""{DefaultNamespace.domain}/Analysis?folder={folder}"""
             # webbrowser.open(url)
 
     # Inspect existing data
@@ -55,7 +55,7 @@ def app():
     for _i, folder in enumerate(existing_folders):
         files = glob.glob(folder + "/*.fit")
         if (n := len(files)) > 0:
-            url = f"""{home}/Analysis?folder={folder}"""
+            url = f"""{DefaultNamespace.domain}/Analysis?folder={folder}"""
 
             left, right = st.columns((4, 1))
             with left:
@@ -84,9 +84,9 @@ def app():
 
 if __name__ == "__main__":
     st.set_page_config(
-        page_title="Wahoo .FIT Inspector",
-        initial_sidebar_state="collapsed",
-        layout="centered",
+        page_title=DefaultNamespace.app_name,
+        initial_sidebar_state=DefaultNamespace.streamlit_initial_sidebar_state,
+        layout=DefaultNamespace.streamlit_layout,
     )
     if check_password():
         app()
