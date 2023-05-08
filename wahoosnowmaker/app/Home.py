@@ -8,7 +8,6 @@ import streamlit as st
 
 from wahoosnowmaker import logger
 from wahoosnowmaker.app.markdown import centered_markdown_title
-from wahoosnowmaker.app.security import check_password
 from wahoosnowmaker.namespace import DefaultNamespace
 from wahoosnowmaker.utils.create_dataset_folder import create_dataset_folder
 from wahoosnowmaker.utils.saveload import load_name
@@ -88,5 +87,5 @@ if __name__ == "__main__":
         initial_sidebar_state=DefaultNamespace.streamlit_initial_sidebar_state,
         layout=DefaultNamespace.streamlit_layout,
     )
-    if check_password():
-        app()
+    # if check_password():
+    app()
