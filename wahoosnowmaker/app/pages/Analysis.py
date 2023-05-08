@@ -31,8 +31,8 @@ def show_analysis(df: pd.DataFrame, folder: str):
         unsafe_allow_html=True,
     )
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(
-        ["Options", "Data", "Rename", "Download", "Notes"]
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+        ["Options", "Data", "Rename", "Download", "Notes", "Statistics"]
     )
     with tab1:
         default = int(
@@ -70,7 +70,7 @@ def show_analysis(df: pd.DataFrame, folder: str):
         for file in files:
             centerleft, centerright = st.columns((4, 1))
             with centerleft:
-                st.text(file)
+                st.write(file)
             with centerright:
                 with open(file, "rb") as f:
                     st.download_button(label="Download", data=f, file_name=file)
@@ -80,6 +80,11 @@ def show_analysis(df: pd.DataFrame, folder: str):
             f"Notes for dataset created at {date}", value=load_notes(folder), height=300
         )
         save_notes(folder, dataset_notes)
+
+    with tab6:
+        for group, dfgroup in df.groupby("file"):
+            st.write(group)
+            st.write(dfgroup.describe())
 
     show_map(
         df, color_attribute=color_by, mapbox_style=map_style, color_scale=colorscale
