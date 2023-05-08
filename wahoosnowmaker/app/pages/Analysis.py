@@ -5,7 +5,11 @@ import pandas as pd
 import streamlit as st
 
 from wahoosnowmaker.app.markdown import centered_markdown_title
-from wahoosnowmaker.app.viz.chartsplotly import show_chart, show_map
+from wahoosnowmaker.app.viz.chartsplotly import (
+    show_chart,
+    show_map,
+    show_scatter,
+)
 from wahoosnowmaker.namespace import DefaultNamespace
 from wahoosnowmaker.parser.parse_folder import parse_folder
 from wahoosnowmaker.utils.saveload import (
@@ -91,6 +95,20 @@ def show_analysis(df: pd.DataFrame, folder: str):
     )
     if len(chart_options) > 0:
         show_chart(df, chart_options)
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        xvalue = st.selectbox("Column for x-axis.", df.columns, key="xscatter")
+    with col2:
+        yvalue = st.selectbox("Column for y-axis.", df.columns, key="yscatter")
+    with col3:
+        default = int(
+            np.argwhere(df.columns == DefaultNamespace.default_color_by)[0][0]
+        )
+        color_by = st.selectbox("Color", df.columns, default, key="color")
+        if color_by is None:
+            color_by = DefaultNamespace.default_color_by
+    show_scatter(df, xvalue, yvalue, color_by)
 
 
 def app():

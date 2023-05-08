@@ -130,3 +130,15 @@ def show_map(
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+
+@st.cache_data
+def show_scatter(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    color: str = DefaultNamespace.default_color_by,
+) -> None:
+    logger.info("Creating x vs y.")
+    fig = px.scatter(df, x=x, y=y, color=color, width=800, opacity=0.9)
+    st.plotly_chart(fig, use_container_width=True)
