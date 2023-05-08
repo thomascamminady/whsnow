@@ -58,7 +58,7 @@ def show_chart(df: pd.DataFrame, fields_to_plot: list[str]) -> None:
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
 
-    st.plotly_chart(fig, use_container_width=True, theme=None)
+    st.plotly_chart(fig, use_container_width=True, theme=DefaultNamespace.theme)
 
 
 @st.cache_data
@@ -129,4 +129,4 @@ def show_map(
         },
     )
 
-    st.plotly_chart(fig, use_container_width=True, theme=None)
+    st.plotly_chart(fig, use_container_width=True, theme=DefaultNamespace.theme)

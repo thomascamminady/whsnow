@@ -62,6 +62,8 @@ class Namespace:
     map_styles = free_styles + mapbox_styles
 
     colorscales = px.colors.named_colorscales()
+    # theme = "streamlit"
+    theme = None
 
 
 DefaultNamespace = Namespace()
