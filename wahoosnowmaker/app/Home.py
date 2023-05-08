@@ -82,6 +82,7 @@ def app():
                 logger.warning(e)
 
 
+NO_BALLONS_YET = True
 if __name__ == "__main__":
     st.set_page_config(
         page_title=DefaultNamespace.app_name,
@@ -89,5 +90,4 @@ if __name__ == "__main__":
         layout=DefaultNamespace.streamlit_layout,
     )
     if check_password():
-        st.balloons()
         app()

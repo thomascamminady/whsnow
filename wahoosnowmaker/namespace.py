@@ -7,7 +7,7 @@ import plotly.express as px
 class Namespace:
     app_name = "Wahoo .fit Inspector"
     domain = """https://wahoofit.streamlit.app"""
-    # domain = """http://localhost:8501"""
+    domain = """http://localhost:8501"""
 
     name_file_name = "name.txt"
     notes_file_name = "notes.txt"
