@@ -55,7 +55,12 @@ Columns = [
     ColumnName(
         Namespace.column_speed,
         pl.Float64,
-        ["enhanced_spd_mps", "spd_mps", "enhanced_speed", "speed"],
+        ["spd_mps", "speed"],
+    ),
+    ColumnName(
+        Namespace.column_enhanced_speed,
+        pl.Float64,
+        ["enhanced_spd_mps", "enhanced_speed"],
     ),
     ColumnName(
         Namespace.column_heartrate,
@@ -80,6 +85,11 @@ Columns = [
     ColumnName(
         Namespace.column_altitude,
         pl.Float64,
-        ["enhanced_alt_m", "elevation", "enhanced_altitude", "altitude"],
+        ["elevation", "altitude"],
+    ),
+    ColumnName(
+        Namespace.column_enhanced_altitude,
+        pl.Float64,
+        ["enhanced_alt_m", "enhanced_altitude"],
     ),
 ]

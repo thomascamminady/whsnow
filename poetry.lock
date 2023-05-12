@@ -2181,6 +2181,22 @@ files = [
 streamlit = ">=0.75"
 
 [[package]]
+name = "streamlit-plotly-events"
+version = "0.0.6"
+description = "Plotly chart component for Streamlit that also allows for events to bubble back up to Streamlit."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "streamlit-plotly-events-0.0.6.tar.gz", hash = "sha256:1fe25dbf0e5d803aeb90253be04d7b395f5bcfdf3c654f96ff3c19424e7f9582"},
+    {file = "streamlit_plotly_events-0.0.6-py3-none-any.whl", hash = "sha256:e63fbe3c6a0746fdfce20060fc45ba5cd97805505c332b27372dcbd02c2ede29"},
+]
+
+[package.dependencies]
+plotly = ">=4.14.3"
+streamlit = ">=0.63"
+
+[[package]]
 name = "tenacity"
 version = "8.2.2"
 description = "Retry code until it succeeds"
@@ -2527,4 +2543,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "01ff55a25d26921d080fb687c2d3c2f1c891f76bd7bc806e20788bdb16c2550d"
+content-hash = "ea94b156153e30b02a830dd5a016ce1680afe2b609c658b7650e8ec716249abc"
