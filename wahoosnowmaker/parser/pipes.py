@@ -28,12 +28,18 @@ def parse_timestamp(
 
 
 def convert_semicircles_to_lat_lon(_df: pl.DataFrame):
-    return _df.with_columns(
-        [
-            pl.col(Namespace.column_latitude) * 180 / 2**31,
-            pl.col(Namespace.column_longitude) * 180 / 2**31,
-        ]
-    )
+    if (
+        Namespace.column_latitude in _df.columns
+        and Namespace.column_longitude in _df.columns
+    ):
+        return _df.with_columns(
+            [
+                pl.col(Namespace.column_latitude) * 180 / 2**31,
+                pl.col(Namespace.column_longitude) * 180 / 2**31,
+            ]
+        )
+    else:
+        return _df
 
 
 def compute_elapsed_seconds(_df: pl.DataFrame):
@@ -46,6 +52,7 @@ def compute_elapsed_seconds(_df: pl.DataFrame):
 
 def make_column_names_consistent(_df: pl.DataFrame):
     mapping = {}
+    print(_df)
     for column in Columns:
         for key, value in column.to_dict().items():
             if key in _df.columns:

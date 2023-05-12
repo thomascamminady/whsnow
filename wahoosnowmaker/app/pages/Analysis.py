@@ -90,9 +90,13 @@ def show_analysis(df: pd.DataFrame, folder: str):
             st.write(group)
             st.write(dfgroup.describe())
 
-    show_map(
-        df, color_attribute=color_by, mapbox_style=map_style, color_scale=colorscale
-    )
+    if (
+        DefaultNamespace.column_longitude in df.columns
+        and DefaultNamespace.column_longitude in df
+    ):
+        show_map(
+            df, color_attribute=color_by, mapbox_style=map_style, color_scale=colorscale
+        )
     if len(chart_options) > 0:
         show_chart(df, chart_options)
 
